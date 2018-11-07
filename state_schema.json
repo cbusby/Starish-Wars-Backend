@@ -5,7 +5,7 @@
 		"coordinate": {
 			"type": "object",
 			"properties": {
-				"row": {"type": "string", "minLength": 1, "maxLength": 1},
+				"row": {"type": "string", "pattern": "^[A-J]$"},
 				"column": {"type": "integer", "minimum": 1, "maximum": 10}
 			},
 			"required": ["row", "column"]
