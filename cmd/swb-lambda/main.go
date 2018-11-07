@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Starish-Wars-Backend/internal/swb"
+	"github.com/Starish-Wars-Backend/internal/swb/persistence"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -14,9 +15,10 @@ import (
 var errorLogger = log.New(os.Stderr, "ERROR ", log.Llongfile)
 
 func router(req events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
+	persister := persistence.AWSS3Persister{}
 	switch req.HTTPMethod {
 	case "POST":
-		gameID, body, err := swb.Create()
+		gameID, body, err := swb.Create(persister)
 		if err != nil {
 			return serverError(err, "Could not create game")
 		}
