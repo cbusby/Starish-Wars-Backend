@@ -9,10 +9,10 @@ import (
 	"github.com/Starish-Wars-Backend/internal/swb/persistence"
 )
 
+var schemaLoader = gojsonschema.NewReferenceLoader("file:///Users/johntodd/workspace/go/src/github.com/Starish-Wars-Backend/api/state_schema.json")
+
 // TestCreate test the Create function
 func TestCreate(t *testing.T) {
-	var schemaLoader = gojsonschema.NewReferenceLoader("file:///Users/johntodd/workspace/go/src/github.com/Starish-Wars-Backend/api/state_schema.json")
-
 	mockPersister := persistence.MockPersister{}
 	gameID, response, err := Create(mockPersister)
 	if err != nil {
