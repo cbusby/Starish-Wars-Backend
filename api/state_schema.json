@@ -1,0 +1,72 @@
+{
+	"$schema" : "http://json-schema.org/draft-04/schema#",
+
+	"definitions": {
+		"coordinate": {
+			"type": "object",
+			"properties": {
+				"row": {"type": "string", "pattern": "^[A-J]$"},
+				"column": {"type": "integer", "minimum": 1, "maximum": 10}
+			},
+			"required": ["row", "column"]
+		},
+		"grid": {
+			"type": "object",
+			"properties": {
+				"carrier": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/coordinate"},
+					"minItems": 5,
+					"maxItems": 5
+				},
+				"battleship": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/coordinate"},
+					"minItems": 4,
+					"maxItems": 4
+				},
+				"cruiser": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/coordinate"},
+					"minItems": 3,
+					"maxItems": 3
+				},
+				"submarine": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/coordinate"},
+					"minItems": 3,
+					"maxItems": 3
+				},
+				"destroyer": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/coordinate"},
+					"minItems": 2,
+					"maxItems": 2
+				}
+			},
+			"required": ["carrier", "battleship", "cruiser", "submarine", "destroyer"]
+		},
+		"player": {
+			"type": "object",
+			"properties": {
+				"ships": {"$ref": "#/definitions/grid"},
+				"shots": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/coordinate"}
+				}
+			}
+		}
+	},
+
+	"type": "object",
+	"description": "game",
+	"properties": {
+		"player_1": {"$ref": "#/definitions/player"},
+		"player_2": {"$ref": "#/definitions/player"},
+		"status": {
+			"type": "string",
+			"enum": ["AWAITING_SHIPS", "PLAYER_1_ACTIVE", "PLAYER_2_ACTIVE", "GAME_OVER"]
+		}
+	},
+	"required": ["player_1", "player_2", "status"]
+}
