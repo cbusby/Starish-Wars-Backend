@@ -20,7 +20,7 @@ install_aws_cli() {
     sudo apt-get -y install python-dev python-setuptools
     sudo easy_install --upgrade pip six
     sudo pip install urllib3==1.21.1 ;# to satisfy version dependency conflict
-    sudo pip install awscli --upgrade --user
+    sudo pip install awscli
 }
 
 [ "${BASH_SOURCE[0]}" == "$0" ] && main "$@"
