@@ -25,3 +25,8 @@ jobs:
       - run: go get -v -t -d ./...
       - run: go test -v ./...
 
+      - deploy:
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ./.circleci/deploy.sh
+            fi
