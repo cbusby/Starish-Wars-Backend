@@ -12,7 +12,7 @@ deploy_hello_zip() {
     zip hello.zip ./hello
 
     echo $PWD
-    aws update-function-code --function-name AluminumFalcon --zip-file hello.zip
+    aws lambda update-function-code --function-name AluminumFalcon --zip-file ./hello.zip
 }
 
 install_aws_cli() {
