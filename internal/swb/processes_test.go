@@ -1,15 +1,11 @@
 package swb
 
 import (
-	"fmt"
+	"encoding/json"
 	"testing"
-
-	"github.com/xeipuuv/gojsonschema"
 
 	"github.com/Starish-Wars-Backend/internal/swb/persistence"
 )
-
-var schemaLoader = gojsonschema.NewReferenceLoader("file:///Users/johntodd/workspace/go/src/github.com/Starish-Wars-Backend/api/state_schema.json")
 
 // TestCreate test the Create function
 func TestCreate(t *testing.T) {
@@ -21,17 +17,15 @@ func TestCreate(t *testing.T) {
 	if gameID == "" {
 		t.Errorf("gameID should not be empty")
 	}
-	responseLoader := gojsonschema.NewStringLoader(response)
-	result, parseErr := gojsonschema.Validate(schemaLoader, responseLoader)
-	if parseErr != nil {
-		t.Errorf("Did not expect an error while parsing")
-		t.Errorf("%s", parseErr)
-		return
+	responseObject := Game{}
+	json.Unmarshal([]byte(response), &responseObject)
+	if responseObject.Player1 != (Player{}) {
+		t.Errorf("Expected player 1 to be nil when game is created")
 	}
-	if !result.Valid() {
-		fmt.Printf("The response is not valid. See errors :\n")
-		for _, err := range result.Errors() {
-			fmt.Printf("- %s]n", err)
-		}
+	if responseObject.Player2 != (Player{}) {
+		t.Errorf("Expected player 2 to be nil when game is created")
+	}
+	if responseObject.Status != "AWAITING_SHIPS" {
+		t.Errorf("Expected game status to be AWAITING_SHIPS")
 	}
 }
