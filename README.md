@@ -5,7 +5,7 @@
 
 - The Go build tools prefer all Go projects to be in a single directory. That directory should be pointed at by an environment variable `GOPATH`. Make a src directory within it and put all your projects there.
 - Projects are named by where they can be downloaded by CVS, e.g., github.com/Starish-Wars-Backend. To clone this project into an appropriate place, navigate to `$GOPATH/src` and do `git clone <repo> github.com/Starish-Wars-Backend`. This will create the correct subdirectory and place the code in the right place.
-- If `GOPATH` is set appropriately, you can build your code from anywhere on your machine: `env GOOS=linux GOARCH=amd64 go build -o $GOPATH/bin/main github.com/Starish-Wars-Backend/cmd/main`.
+- If `GOPATH` is set appropriately, you can build your code from anywhere on your machine: `env GOOS=linux GOARCH=amd64 go build -o $GOPATH/bin/main github.com/Starish-Wars-Backend/main`.
 - AWS Lambda requires a zip file with the executable: `zip -j main.zip main`.
 - The team has settled on Ginkgo and Gomega as our testing framework. This provides an expressive test syntax similar to Jest in JavaScript. Ginkgo provides the basic testing functionality, while Gomega provides a DSL that allows fluent testing and test grouping patterns.
   - https://onsi.github.io/ginkgo/
