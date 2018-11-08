@@ -14,7 +14,7 @@ import (
 
 var errorLogger = log.New(os.Stderr, "ERROR ", log.Llongfile)
 
-func router(req events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
+func router(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	persister := persistence.AWSS3Persister{}
 	switch req.HTTPMethod {
 	case "POST":
@@ -28,30 +28,30 @@ func router(req events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
 	}
 }
 
-func createNewGameResponse(gameID string, body string) events.APIGatewayProxyResponse {
+func createNewGameResponse(gameID string, body string) (events.APIGatewayProxyResponse, error) {
 	headers := make(map[string]string)
 	headers["Location"] = gameID
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusCreated,
 		Body:       body,
 		Headers:    headers,
-	}
+	}, nil
 }
 
-func serverError(err error, message string) events.APIGatewayProxyResponse {
+func serverError(err error, message string) (events.APIGatewayProxyResponse, error) {
 	errorLogger.Println(err.Error())
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusInternalServerError,
 		Body:       message,
-	}
+	}, nil
 }
 
-func clientError(status int, message string) events.APIGatewayProxyResponse {
+func clientError(status int, message string) (events.APIGatewayProxyResponse, error) {
 	return events.APIGatewayProxyResponse{
 		StatusCode: status,
 		Body:       message,
-	}
+	}, nil
 }
 
 func main() {
