@@ -1,4 +1,4 @@
-package swb_test
+package swb
 
 import (
 	"testing"

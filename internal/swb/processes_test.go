@@ -1,4 +1,4 @@
-package swb_test
+package swb
 
 import (
 	"encoding/json"
@@ -6,7 +6,6 @@ import (
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
 
-	"github.com/Starish-Wars-Backend/internal/swb"
 	"github.com/Starish-Wars-Backend/internal/swb/persistence"
 )
 
@@ -14,16 +13,16 @@ var _ = ginkgo.Describe("Processes", func() {
 	ginkgo.Describe("POST", func() {
 		var (
 			gameID      string
-			game        swb.Game
+			game        Game
 			err         error
-			emptyPlayer swb.Player
+			emptyPlayer Player
 		)
 
 		ginkgo.BeforeEach(func() {
 			mockPersister := persistence.MockPersister{}
 			var g string
-			gameID, g, err = swb.Create(mockPersister)
-			game = swb.Game{}
+			gameID, g, err = Create(mockPersister)
+			game = Game{}
 			json.Unmarshal([]byte(g), &game)
 		})
 
@@ -44,7 +43,7 @@ var _ = ginkgo.Describe("Processes", func() {
 		})
 
 		ginkgo.It("should return status AWAITING_SHIPS", func() {
-			gomega.Expect(game.Status).To(gomega.Equal(swb.AWAITING_SHIPS))
+			gomega.Expect(game.Status).To(gomega.Equal(AWAITING_SHIPS))
 		})
 	})
 })
