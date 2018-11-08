@@ -21,11 +21,10 @@ var _ = ginkgo.Describe("Processes", func() {
 
 		ginkgo.BeforeEach(func() {
 			mockPersister := persistence.MockPersister{}
-			gi, ga, e := swb.Create(mockPersister)
-			gameID = gi
+			var g string
+			gameID, g, err = swb.Create(mockPersister)
 			game = swb.Game{}
-			json.Unmarshal([]byte(ga), &game)
-			err = e
+			json.Unmarshal([]byte(g), &game)
 		})
 
 		ginkgo.It("Should not return an error", func() {
