@@ -23,10 +23,11 @@ install_aws_cli() {
 
 deploy_main_zip() {
     mkdir bin
-    env GOOS=linux GOARCH=amd64 go build -o ./bin/main github.com/cbusby/Starish-Wars-Backend/cmd/main
-    zip bin/main.zip bin/main
+    cd bin
+    env GOOS=linux GOARCH=amd64 go build -o ./main github.com/cbusby/Starish-Wars-Backend/cmd/main
+    zip ./main.zip ./main
 
-    aws lambda update-function-code --function-name swb-lambda --zip-file fileb://./bin/main.zip
+    aws lambda update-function-code --function-name swb-lambda --zip-file fileb://./main.zip
 }
 
 [ "${BASH_SOURCE[0]}" == "$0" ] && main "$@"
