@@ -5,21 +5,12 @@ set -x
 main() {
     set_up_aws_credentials
     install_aws_cli
-    deploy_hello_zip
+    deploy_main_zip
 }
 
 set_up_aws_credentials() {
   mkdir "${HOME}/.aws"
   printf "[default]\naws_access_key_id = ${AWS_ACCESS_KEY_ID}\naws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}\nregion = us-east-2" > "${HOME}/.aws/config"
-}
-
-deploy_hello_zip() {
-    pushd hello
-    GOOS=linux go build hello.go
-    zip hello.zip ./hello
-    popd
-
-    aws lambda update-function-code --function-name AluminumFalcon --zip-file fileb://./hello/hello.zip
 }
 
 install_aws_cli() {
@@ -28,6 +19,14 @@ install_aws_cli() {
     sudo easy_install --upgrade pip six
     sudo pip install urllib3==1.21.1 ;# to satisfy version dependency conflict
     sudo pip install awscli
+}
+
+deploy_main_zip() {
+    mkdir bin
+    GOOS=linux GOARCH=amd64 go build -o ./bin/main github.com/cbusby/Starish-Warsh-Backend/cmd/main
+    zip bin/main.zip bin/main
+
+    aws lambda update-function-code --function-name swb-lambda --zip-file fileb://./bin/main.zip
 }
 
 [ "${BASH_SOURCE[0]}" == "$0" ] && main "$@"
