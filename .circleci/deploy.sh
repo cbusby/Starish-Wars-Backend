@@ -23,7 +23,7 @@ install_aws_cli() {
 
 deploy_main_zip() {
     mkdir bin
-    env GOOS=linux GOARCH=amd64 go build -o ./bin/main github.com/cbusby/Starish-Warsh-Backend/cmd/main
+    env GOOS=linux GOARCH=amd64 go build -o ./bin/main github.com/cbusby/Starish-Wars-Backend/cmd/main
     zip bin/main.zip bin/main
 
     aws lambda update-function-code --function-name swb-lambda --zip-file fileb://./bin/main.zip
