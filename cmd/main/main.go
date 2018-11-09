@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Starish-Wars-Backend/internal/swb"
-	"github.com/Starish-Wars-Backend/internal/swb/persistence"
+	"github.com/cbusby/Starish-Wars-Backend/internal/swb"
+	"github.com/cbusby/Starish-Wars-Backend/internal/swb/persistence"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"

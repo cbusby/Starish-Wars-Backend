@@ -6,7 +6,7 @@ import (
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
 
-	"github.com/Starish-Wars-Backend/internal/swb/persistence"
+	"github.com/cbusby/Starish-Wars-Backend/internal/swb/persistence"
 )
 
 var _ = ginkgo.Describe("Processes", func() {
