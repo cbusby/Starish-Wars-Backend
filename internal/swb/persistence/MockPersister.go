@@ -8,3 +8,7 @@ type MockPersister struct {
 func (m MockPersister) Save(name string, contents string) error {
 	return nil
 }
+
+func (m MockPersister) Read(gameID string) (string, error) {
+	return "Read '" + gameID + "'", nil
+}
