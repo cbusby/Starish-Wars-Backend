@@ -2,6 +2,7 @@ package swb
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
@@ -44,6 +45,28 @@ var _ = ginkgo.Describe("Processes", func() {
 
 		ginkgo.It("should return status AWAITING_SHIPS", func() {
 			gomega.Expect(game.Status).To(gomega.Equal(AWAITING_SHIPS))
+		})
+	})
+
+	ginkgo.Describe("GET", func() {
+
+		gameID := "123abc"
+		var (
+			contents string
+			err      error
+		)
+
+		ginkgo.BeforeEach(func() {
+			persister := persistence.MockPersister{}
+			contents, err = Read(persister, gameID)
+		})
+
+		ginkgo.It("Should not return an error", func() {
+			gomega.Expect(err).To(gomega.BeNil())
+		})
+
+		ginkgo.It("Should read correctly", func() {
+			gomega.Expect(contents).To(gomega.Equal(fmt.Sprintf("Read '%s'", gameID)))
 		})
 	})
 })

@@ -17,6 +17,13 @@ var errorLogger = log.New(os.Stderr, "ERROR ", log.Llongfile)
 func router(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	persister := persistence.AWSS3Persister{}
 	switch req.HTTPMethod {
+	case "GET":
+		gameID := req.PathParameters["gameID"]
+		contents, err := swb.Read(persister, gameID)
+		if err != nil {
+			return serverError(err, "Could not get content for "+gameID)
+		}
+		return createGetGameResponse(gameID, contents)
 	case "POST":
 		gameID, body, err := swb.Create(persister)
 		if err != nil {
@@ -33,6 +40,16 @@ func createNewGameResponse(gameID string, body string) (events.APIGatewayProxyRe
 	headers["Location"] = gameID
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusCreated,
+		Body:       body,
+		Headers:    headers,
+	}, nil
+}
+
+func createGetGameResponse(gameID string, body string) (events.APIGatewayProxyResponse, error) {
+	headers := make(map[string]string)
+	headers["Location"] = gameID
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusOK,
 		Body:       body,
 		Headers:    headers,
 	}, nil
