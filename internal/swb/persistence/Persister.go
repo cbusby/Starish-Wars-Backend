@@ -2,7 +2,7 @@ package persistence
 
 // Persister saves data to a data store
 type Persister interface {
-	Save(name string, contents string) error
+	Save(gameID string, contents string) error
 
-	Read(name string) (string, error)
+	Read(gameID string) (string, error)
 }

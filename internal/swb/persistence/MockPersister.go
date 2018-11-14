@@ -5,7 +5,7 @@ type MockPersister struct {
 }
 
 // Save keep function arguments and do nothing
-func (m MockPersister) Save(name string, contents string) error {
+func (m MockPersister) Save(gameID string, contents string) error {
 	return nil
 }
 

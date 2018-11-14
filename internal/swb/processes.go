@@ -26,11 +26,7 @@ func Create(persister persistence.Persister) (string, string, error) {
 
 // Read reads the current state of an existing game
 func Read(persister persistence.Persister, gameID string) (string, error) {
-	contents, readErr := persister.Read(gameID)
-	if readErr != nil {
-		return "", readErr
-	}
-	return contents, nil
+	return persister.Read(gameID)
 }
 
 func newGame() string {
