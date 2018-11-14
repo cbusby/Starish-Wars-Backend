@@ -3,7 +3,9 @@ package persistence
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -16,29 +18,28 @@ import (
 type AWSS3Persister struct {
 }
 
-// Save Save content to Amazon S3
-func (a AWSS3Persister) Save(name string, contents string) error {
-	region := aws.String("us-east-2")
-	bucket := aws.String("aluminum-falcon")
+var region = aws.String(os.Getenv("REGION"))
+var bucket = aws.String(os.Getenv("BUCKET"))
+var filenameTemplate = "games/%s.json"
 
-	sess, _ := session.NewSession(&aws.Config{Region: region})
+// Save Save content to Amazon S3
+func (a AWSS3Persister) Save(gameID string, contents string) error {
+	sess, _ := getAWSSession()
 	uploader := s3manager.NewUploader(sess)
 	_, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: bucket,
-		Key:    aws.String("games/" + name + ".json"),
+		Key:    getSWBFilename(gameID),
 		Body:   strings.NewReader(contents),
 	})
 	return err
 }
 
-func (a AWSS3Persister) Read(name string) (string, error) {
-	region := aws.String("us-east-2")
-	bucket := aws.String("aluminum-falcon")
-	sess, _ := session.NewSession(&aws.Config{Region: region})
+func (a AWSS3Persister) Read(gameID string) (string, error) {
+	sess, _ := getAWSSession()
 	svc := s3.New(sess)
 	input := &s3.GetObjectInput{
 		Bucket: bucket,
-		Key:    aws.String("games/" + name + ".json"),
+		Key:    getSWBFilename(gameID),
 	}
 	result, err := svc.GetObject(input)
 	if err != nil {
@@ -54,4 +55,12 @@ func (a AWSS3Persister) Read(name string) (string, error) {
 	}
 	contents := string(buf.Bytes()[:n])
 	return contents, nil
+}
+
+func getAWSSession() (*session.Session, error) {
+	return session.NewSession(&aws.Config{Region: region})
+}
+
+func getSWBFilename(gameID string) *string {
+	return aws.String(fmt.Sprintf(filenameTemplate, gameID))
 }
