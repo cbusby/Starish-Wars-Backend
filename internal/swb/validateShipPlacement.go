@@ -4,6 +4,7 @@ import (
 	"sort"
 )
 
+// Ships are sorted top to bottom, left to right as a side effect of calling this function
 func validateShipPlacement(grid Grid) bool {
 	return allShipsPresent(grid) &&
 		allShipsOnGrid(grid) &&
@@ -125,6 +126,8 @@ func allShipsInTouchingSpaces(grid Grid) bool {
 	return true
 }
 
+// This is where the sorting takes place
+// Look into copying the ships before sorting?
 func shipIsContiguous(ship []Coordinate) bool {
 	sort.Slice(ship, func(i, j int) bool {
 		if ship[i].Row == ship[j].Row {
