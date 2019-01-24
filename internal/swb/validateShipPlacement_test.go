@@ -259,4 +259,26 @@ var _ = ginkgo.Describe("Validation of initial ship placement", func() {
 			gomega.Expect(allShipsInTouchingSpaces(invalid)).NotTo(gomega.BeTrue())
 		})
 	})
+
+	ginkgo.Describe("No ships overlap", func() {
+		ginkgo.It("flags as valid a grid where no ships overlap", func() {
+			gomega.Expect(shipsDoNotOverlap(valid)).To(gomega.BeTrue())
+		})
+
+		ginkgo.It("flags as invalid a grid where ships overlap", func() {
+			invalid = Grid{}
+			invalid.Carrier[0] = Coordinate{'A', 1}
+			invalid.Carrier[1] = Coordinate{'A', 2}
+			invalid.Carrier[2] = Coordinate{'A', 3}
+			invalid.Carrier[3] = Coordinate{'A', 4}
+			invalid.Carrier[4] = Coordinate{'A', 5}
+
+			invalid.Battleship[0] = Coordinate{'A', 5}
+			invalid.Battleship[1] = Coordinate{'A', 6}
+			invalid.Battleship[2] = Coordinate{'A', 7}
+			invalid.Battleship[3] = Coordinate{'A', 8}
+
+			gomega.Expect(shipsDoNotOverlap(invalid)).NotTo(gomega.BeTrue())
+		})
+	})
 })
