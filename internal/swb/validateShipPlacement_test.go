@@ -52,6 +52,40 @@ var _ = ginkgo.Describe("Validation of initial ship placement", func() {
 		})
 	})
 
+	ginkgo.Describe("All ships should fall on the 10x10 grid", func() {
+		ginkgo.It("flags a grid as valid if all ships fall on the grid", func() {
+			gomega.Expect(allShipsOnGrid(valid)).To(gomega.BeTrue())
+		})
+
+		ginkgo.It("flags a grid as invalid if a ship falls off the left side of the grid", func() {
+			invalid = Grid{}
+			invalid.Destroyer[0] = Coordinate{'A', 0}
+			invalid.Destroyer[1] = Coordinate{'A', 1}
+			gomega.Expect(allShipsOnGrid(invalid)).NotTo(gomega.BeTrue())
+		})
+
+		ginkgo.It("flags a grid as invalid if a ship falls off the right side of the grid", func() {
+			invalid = Grid{}
+			invalid.Destroyer[0] = Coordinate{'A', 10}
+			invalid.Destroyer[1] = Coordinate{'A', 11}
+			gomega.Expect(allShipsOnGrid(invalid)).NotTo(gomega.BeTrue())
+		})
+
+		ginkgo.It("flags a grid as invalid if a ship falls off the top side of the grid", func() {
+			invalid = Grid{}
+			invalid.Destroyer[0] = Coordinate{'z', 1}
+			invalid.Destroyer[1] = Coordinate{'A', 1}
+			gomega.Expect(allShipsOnGrid(invalid)).NotTo(gomega.BeTrue())
+		})
+
+		ginkgo.It("flags a grid as invalid if a ship falls off the bottom side of the grid", func() {
+			invalid = Grid{}
+			invalid.Destroyer[0] = Coordinate{'J', 1}
+			invalid.Destroyer[1] = Coordinate{'K', 1}
+			gomega.Expect(allShipsOnGrid(invalid)).NotTo(gomega.BeTrue())
+		})
+	})
+
 	ginkgo.Describe("All ships should be horizontal or vertical", func() {
 		ginkgo.It("flags a grid as valid if all ships are horizontal or vertical", func() {
 			gomega.Expect(allShipsHorizontalOrVertical(valid)).To(gomega.BeTrue())
