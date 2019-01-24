@@ -38,7 +38,31 @@ func allShipsOnBoard(grid Grid) bool {
 }
 
 func allShipsHorizontalOrVertical(grid Grid) bool {
-	return false
+	var retVal = true
+	retVal = retVal && (shipIsHorizontal(grid.Carrier[:]) || shipIsVertical(grid.Carrier[:]))
+	retVal = retVal && (shipIsHorizontal(grid.Battleship[:]) || shipIsVertical(grid.Battleship[:]))
+	retVal = retVal && (shipIsHorizontal(grid.Cruiser[:]) || shipIsVertical(grid.Cruiser[:]))
+	retVal = retVal && (shipIsHorizontal(grid.Submarine[:]) || shipIsVertical(grid.Submarine[:]))
+	retVal = retVal && (shipIsHorizontal(grid.Destroyer[:]) || shipIsVertical(grid.Destroyer[:]))
+	return retVal
+}
+
+func shipIsHorizontal(ship []Coordinate) bool {
+	for i := 1; i < len(ship); i++ {
+		if ship[i].Column != ship[0].Column {
+			return false
+		}
+	}
+	return true
+}
+
+func shipIsVertical(ship []Coordinate) bool {
+	for i := 1; i < len(ship); i++ {
+		if ship[i].Row != ship[0].Row {
+			return false
+		}
+	}
+	return true
 }
 
 func allShipsInTouchingSpaces(grid Grid) bool {
