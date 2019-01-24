@@ -150,5 +150,46 @@ func shipIsContiguous(ship []Coordinate) bool {
 }
 
 func shipsDoNotOverlap(grid Grid) bool {
+	if shipsOverlap(grid.Carrier[:], grid.Battleship[:]) {
+		return false
+	}
+	if shipsOverlap(grid.Carrier[:], grid.Cruiser[:]) {
+		return false
+	}
+	if shipsOverlap(grid.Carrier[:], grid.Submarine[:]) {
+		return false
+	}
+	if shipsOverlap(grid.Carrier[:], grid.Destroyer[:]) {
+		return false
+	}
+	if shipsOverlap(grid.Battleship[:], grid.Cruiser[:]) {
+		return false
+	}
+	if shipsOverlap(grid.Battleship[:], grid.Submarine[:]) {
+		return false
+	}
+	if shipsOverlap(grid.Battleship[:], grid.Destroyer[:]) {
+		return false
+	}
+	if shipsOverlap(grid.Cruiser[:], grid.Submarine[:]) {
+		return false
+	}
+	if shipsOverlap(grid.Cruiser[:], grid.Destroyer[:]) {
+		return false
+	}
+	if shipsOverlap(grid.Submarine[:], grid.Destroyer[:]) {
+		return false
+	}
+	return true
+}
+
+func shipsOverlap(ship1 []Coordinate, ship2 []Coordinate) bool {
+	for i := 0; i < len(ship2); i++ {
+		for j := 0; j < len(ship1); j++ {
+			if ship1[j] == ship2[i] {
+				return true
+			}
+		}
+	}
 	return false
 }
