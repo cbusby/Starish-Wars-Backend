@@ -2,6 +2,7 @@ package swb
 
 func validateShipPlacement(grid Grid) bool {
 	return allShipsPresent(grid) &&
+		allShipsOnGrid(grid) &&
 		allShipsHorizontalOrVertical(grid) &&
 		allShipsInTouchingSpaces(grid) &&
 		shipsDoNotOverlap(grid)
@@ -30,6 +31,34 @@ func allShipsPresent(grid Grid) bool {
 	}
 	for i := 0; i < len(grid.Destroyer); i++ {
 		if grid.Destroyer[i] == (Coordinate{}) {
+			return false
+		}
+	}
+	return true
+}
+
+func allShipsOnGrid(grid Grid) bool {
+	if !allCoordsOnGrid(grid.Carrier[:]) {
+		return false
+	}
+	if !allCoordsOnGrid(grid.Battleship[:]) {
+		return false
+	}
+	if !allCoordsOnGrid(grid.Cruiser[:]) {
+		return false
+	}
+	if !allCoordsOnGrid(grid.Submarine[:]) {
+		return false
+	}
+	if !allCoordsOnGrid(grid.Destroyer[:]) {
+		return false
+	}
+	return true
+}
+
+func allCoordsOnGrid(ship []Coordinate) bool {
+	for i := 0; i < len(ship); i++ {
+		if ship[i].Row < 'A' || ship[i].Row > 'J' || ship[i].Column < 1 || ship[i].Column > 10 {
 			return false
 		}
 	}
