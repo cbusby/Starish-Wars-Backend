@@ -38,7 +38,7 @@ var _ = ginkgo.Describe("Validation of initial ship placement", func() {
 
 	ginkgo.Describe("All ships should be present", func() {
 		ginkgo.It("flags a grid as valid if all ships present", func() {
-			gomega.Expect(allShipsOnBoard(valid)).To(gomega.BeTrue())
+			gomega.Expect(allShipsPresent(valid)).To(gomega.BeTrue())
 		})
 
 		ginkgo.It("flags a grid as invalid if a ship is missing", func() {
@@ -48,7 +48,7 @@ var _ = ginkgo.Describe("Validation of initial ship placement", func() {
 			invalid.Carrier[2] = Coordinate{'A', 3}
 			invalid.Carrier[3] = Coordinate{'A', 4}
 			invalid.Carrier[4] = Coordinate{'A', 5}
-			gomega.Expect(allShipsOnBoard(invalid)).NotTo(gomega.BeTrue())
+			gomega.Expect(allShipsPresent(invalid)).NotTo(gomega.BeTrue())
 		})
 	})
 
