@@ -1,5 +1,9 @@
 package swb
 
+import (
+	"sort"
+)
+
 func validateShipPlacement(grid Grid) bool {
 	return allShipsPresent(grid) &&
 		allShipsOnGrid(grid) &&
@@ -86,7 +90,7 @@ func allShipsHorizontalOrVertical(grid Grid) bool {
 
 func shipIsHorizontal(ship []Coordinate) bool {
 	for i := 1; i < len(ship); i++ {
-		if ship[i].Column != ship[0].Column {
+		if ship[i].Row != ship[0].Row {
 			return false
 		}
 	}
@@ -95,7 +99,7 @@ func shipIsHorizontal(ship []Coordinate) bool {
 
 func shipIsVertical(ship []Coordinate) bool {
 	for i := 1; i < len(ship); i++ {
-		if ship[i].Row != ship[0].Row {
+		if ship[i].Column != ship[0].Column {
 			return false
 		}
 	}
@@ -103,7 +107,46 @@ func shipIsVertical(ship []Coordinate) bool {
 }
 
 func allShipsInTouchingSpaces(grid Grid) bool {
-	return false
+	if !shipIsContiguous(grid.Carrier[:]) {
+		return false
+	}
+	if !shipIsContiguous(grid.Battleship[:]) {
+		return false
+	}
+	if !shipIsContiguous(grid.Cruiser[:]) {
+		return false
+	}
+	if !shipIsContiguous(grid.Submarine[:]) {
+		return false
+	}
+	if !shipIsContiguous(grid.Destroyer[:]) {
+		return false
+	}
+	return true
+}
+
+func shipIsContiguous(ship []Coordinate) bool {
+	sort.Slice(ship, func(i, j int) bool {
+		if ship[i].Row == ship[j].Row {
+			return ship[i].Column < ship[j].Column
+		} else {
+			return ship[i].Row < ship[j].Row
+		}
+	})
+	if shipIsHorizontal(ship) {
+		for i := 1; i < len(ship); i++ {
+			if ship[i].Column-ship[i-1].Column > 1 {
+				return false
+			}
+		}
+	} else {
+		for i := 1; i < len(ship); i++ {
+			if ship[i].Row-ship[i-1].Row > 1 {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func shipsDoNotOverlap(grid Grid) bool {
