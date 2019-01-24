@@ -281,4 +281,35 @@ var _ = ginkgo.Describe("Validation of initial ship placement", func() {
 			gomega.Expect(shipsDoNotOverlap(invalid)).NotTo(gomega.BeTrue())
 		})
 	})
+
+	ginkgo.It("flags a grid as valid if all criteria are met", func() {
+		gomega.Expect(validateShipPlacement(valid)).To(gomega.BeTrue())
+	})
+
+	ginkgo.It("flags a grid as invalid if a criterion is not met", func() {
+		invalid = Grid{}
+		invalid.Carrier[0] = Coordinate{'A', 1}
+		invalid.Carrier[1] = Coordinate{'A', 2}
+		invalid.Carrier[2] = Coordinate{'A', 3}
+		invalid.Carrier[3] = Coordinate{'A', 4}
+		invalid.Carrier[4] = Coordinate{'A', 5}
+
+		invalid.Battleship[0] = Coordinate{'A', 6}
+		invalid.Battleship[1] = Coordinate{'A', 7}
+		invalid.Battleship[2] = Coordinate{'A', 8}
+		invalid.Battleship[3] = Coordinate{'A', 9}
+
+		invalid.Cruiser[0] = Coordinate{'B', 1}
+		invalid.Cruiser[1] = Coordinate{'B', 2}
+		invalid.Cruiser[2] = Coordinate{'B', 3}
+
+		invalid.Submarine[0] = Coordinate{'B', 4}
+		invalid.Submarine[1] = Coordinate{'C', 5}
+		invalid.Submarine[2] = Coordinate{'B', 6}
+
+		invalid.Destroyer[0] = Coordinate{'B', 7}
+		invalid.Destroyer[1] = Coordinate{'B', 9}
+
+		gomega.Expect(validateShipPlacement(invalid)).NotTo(gomega.BeTrue())
+	})
 })
