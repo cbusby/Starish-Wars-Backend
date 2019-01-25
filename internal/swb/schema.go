@@ -17,7 +17,7 @@ type Grid struct {
 
 // Player combination of ships and shots
 type Player struct {
-	Ships Grid          `json:"grid"`
+	Ships Grid          `json:"ships"`
 	Shots *[]Coordinate `json:"shots"`
 }
 

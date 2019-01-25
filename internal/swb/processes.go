@@ -42,15 +42,30 @@ func Update(persister persistence.Persister, gameID string, requestedGameState s
 	if newGameUnmarshalErr != nil || newGame.Status == "" {
 		return "", fmt.Errorf("Error unmarshaling new game state")
 	}
-	if newGame.Status == AWAITING_SHIPS {
-		if !validateShipPlacement(newGame.Player1.Ships) {
-			return oldGameString, fmt.Errorf("Player 1's ship placement is invalid")
+	var updatedGame Game
+	if oldGame.Status == AWAITING_SHIPS {
+		if !allShipsPresent(oldGame.Player1.Ships) && validateShipPlacement(newGame.Player1.Ships) {
+			updatedGame.Player1.Ships = newGame.Player1.Ships
 		}
-		if !validateShipPlacement(newGame.Player2.Ships) {
-			return oldGameString, fmt.Errorf("Player 2's ship placement is invalid")
+		if !allShipsPresent(oldGame.Player2.Ships) && validateShipPlacement(newGame.Player2.Ships) {
+			updatedGame.Player2.Ships = newGame.Player2.Ships
+		}
+		if allShipsPresent(updatedGame.Player1.Ships) && allShipsPresent(updatedGame.Player2.Ships) {
+			updatedGame.Status = PLAYER_1_ACTIVE
+		} else {
+			updatedGame.Status = AWAITING_SHIPS
 		}
 	}
-	return "", nil
+	updatedGameByteArray, marshalErr := json.Marshal(updatedGame)
+	if marshalErr != nil {
+		return "", marshalErr
+	}
+	updatedGameString := string(updatedGameByteArray)
+	saveErr := persister.Save(gameID, updatedGameString)
+	if saveErr != nil {
+		return "", saveErr
+	}
+	return updatedGameString, nil
 }
 
 // Read reads the current state of an existing game

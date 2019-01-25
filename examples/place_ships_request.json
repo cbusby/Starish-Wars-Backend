@@ -19,5 +19,6 @@
 		},
 		"shots": []
 	},
-	"player_2": {}
+	"player_2": {},
+	"status": "AWAITING_SHIPS"
 }

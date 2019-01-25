@@ -3,6 +3,9 @@ package swb
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
@@ -83,8 +86,8 @@ var _ = ginkgo.Describe("Processes", func() {
 		gameID := "123abc"
 		var (
 			persister persistence.Persister
-			//			contents  string
-			err error
+			contents  string
+			err       error
 		)
 
 		ginkgo.BeforeEach(func() {
@@ -104,7 +107,7 @@ var _ = ginkgo.Describe("Processes", func() {
 		})
 
 		ginkgo.It("should return an error if saved game state is invalid", func() {
-			persister = persistence.MockPersister{gameID, `{"hoo": "hah"}`}
+			persister = persistence.MockPersister{ExpectedGameID: gameID, SavedGameState: `{"hoo": "hah"}`}
 			_, err = Update(persister, gameID, "{}")
 			gomega.Expect(err).NotTo(gomega.BeNil())
 		})
@@ -112,6 +115,15 @@ var _ = ginkgo.Describe("Processes", func() {
 		ginkgo.It("should return an error if new game state is invalid", func() {
 			_, err = Update(persister, gameID, `{"hoo": "hah"}`)
 			gomega.Expect(err).NotTo(gomega.BeNil())
+		})
+
+		ginkgo.It("should update player 1's ship positions when provided", func() {
+			pwd, _ := os.Getwd()
+			projectDir := filepath.Dir(filepath.Dir(pwd))
+			newGameBB, _ := ioutil.ReadFile(filepath.Join(projectDir, "examples", "place_ships_request_collapsed.json"))
+			newGameString := string(newGameBB)
+			contents, _ = Update(persister, gameID, newGameString)
+			gomega.Expect(contents).To(gomega.Equal(newGameString))
 		})
 	})
 })
