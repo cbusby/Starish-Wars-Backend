@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/cbusby/Starish-Wars-Backend/internal/swb"
 	"github.com/cbusby/Starish-Wars-Backend/internal/swb/persistence"
@@ -21,7 +23,11 @@ func router(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, 
 		gameID := req.PathParameters["gameID"]
 		contents, err := swb.Read(persister, gameID)
 		if err != nil {
-			return serverError(err, "Could not get content for "+gameID)
+			if strings.Contains(err.Error(), "Not found") {
+				return notFoundError(err)
+			} else {
+				return serverError(err, fmt.Sprintf("Could not get content for %s", gameID))
+			}
 		}
 		return createGetGameResponse(gameID, contents)
 	case "POST":
@@ -52,6 +58,15 @@ func createGetGameResponse(gameID string, body string) (events.APIGatewayProxyRe
 		StatusCode: http.StatusOK,
 		Body:       body,
 		Headers:    headers,
+	}, nil
+}
+
+func notFoundError(err error) (events.APIGatewayProxyResponse, error) {
+	errorLogger.Println(err.Error())
+
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusNotFound,
+		Body:       err.Error(),
 	}, nil
 }
 
