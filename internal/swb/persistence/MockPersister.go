@@ -1,5 +1,9 @@
 package persistence
 
+import (
+	"fmt"
+)
+
 // MockPersister do-nothing implementation of Persister
 type MockPersister struct {
 	ExpectedGameID string
@@ -11,5 +15,9 @@ func (m MockPersister) Save(gameID string, contents string) error {
 }
 
 func (m MockPersister) Read(gameID string) (string, error) {
-	return "Read '" + gameID + "'", nil
+	if gameID == m.ExpectedGameID {
+		return "Read '" + gameID + "'", nil
+	} else {
+		return "", fmt.Errorf("Not found: %s", gameID)
+	}
 }

@@ -66,6 +66,12 @@ var _ = ginkgo.Describe("Processes", func() {
 			gomega.Expect(err).To(gomega.BeNil())
 		})
 
+		ginkgo.It("Should return an error if an invalid gameID is given", func() {
+			contents, err = Read(persister, "hoohah")
+			gomega.Expect(err).NotTo(gomega.BeNil())
+			gomega.Expect(err.Error()).To(gomega.Equal("Not found: hoohah"))
+		})
+
 		ginkgo.It("Should read correctly", func() {
 			contents, err = Read(persister, gameID)
 			gomega.Expect(contents).To(gomega.Equal(fmt.Sprintf("Read '%s'", gameID)))
