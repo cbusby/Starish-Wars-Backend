@@ -1,6 +1,7 @@
 package swb
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -27,7 +28,29 @@ func Create(persister persistence.Persister) (string, string, error) {
 
 // Update checks that the new state is valid, including comparing the previous game state to the new one, and updates the new game state accordingly
 func Update(persister persistence.Persister, gameID string, requestedGameState string) (string, error) {
-	return "", fmt.Errorf("Not implemented")
+	oldGameString, readOldGameErr := persister.Read(gameID)
+	if readOldGameErr != nil {
+		return "", readOldGameErr
+	}
+	var oldGame Game
+	oldGameUnmarshalErr := json.Unmarshal([]byte(oldGameString), &oldGame)
+	if oldGameUnmarshalErr != nil || oldGame.Status == "" {
+		return "", fmt.Errorf("Error unmarshaling previous game state")
+	}
+	var newGame Game
+	newGameUnmarshalErr := json.Unmarshal([]byte(requestedGameState), &newGame)
+	if newGameUnmarshalErr != nil || newGame.Status == "" {
+		return "", fmt.Errorf("Error unmarshaling new game state")
+	}
+	if newGame.Status == AWAITING_SHIPS {
+		if !validateShipPlacement(newGame.Player1.Ships) {
+			return oldGameString, fmt.Errorf("Player 1's ship placement is invalid")
+		}
+		if !validateShipPlacement(newGame.Player2.Ships) {
+			return oldGameString, fmt.Errorf("Player 2's ship placement is invalid")
+		}
+	}
+	return "", nil
 }
 
 // Read reads the current state of an existing game
