@@ -1,6 +1,7 @@
 package swb
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -22,6 +23,11 @@ func Create(persister persistence.Persister) (string, string, error) {
 	}
 
 	return gameID, body, nil
+}
+
+// Update checks that the new state is valid, including comparing the previous game state to the new one, and updates the new game state accordingly
+func Update(persister persistence.Persister, gameID string, requestedGameState string) (string, error) {
+	return "", fmt.Errorf("Not implemented")
 }
 
 // Read reads the current state of an existing game

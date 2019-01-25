@@ -23,11 +23,11 @@ func router(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, 
 		gameID := req.PathParameters["gameID"]
 		contents, err := swb.Read(persister, gameID)
 		if err != nil {
-			if strings.Contains(err.Error(), "Not found") {
+			if strings.HasPrefix(err.Error(), "Not found") {
 				return notFoundError(err)
-			} else {
-				return serverError(err, fmt.Sprintf("Could not get content for %s", gameID))
 			}
+			return serverError(err, fmt.Sprintf("Could not get content for %s", gameID))
+
 		}
 		return createGetGameResponse(gameID, contents)
 	case "POST":
@@ -36,6 +36,14 @@ func router(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, 
 			return serverError(err, "Could not create game")
 		}
 		return createNewGameResponse(gameID, body)
+	case "PUT":
+		gameID := req.PathParameters["gameID"]
+		game := req.Body
+		newGame, err := swb.Update(persister, gameID, game)
+		if err != nil {
+			return serverError(err, "Could not update game")
+		}
+		return createUpdatedGameResponse(gameID, newGame)
 	default:
 		return clientError(http.StatusMethodNotAllowed, "cannot respond to method "+req.HTTPMethod)
 	}
@@ -52,6 +60,16 @@ func createNewGameResponse(gameID string, body string) (events.APIGatewayProxyRe
 }
 
 func createGetGameResponse(gameID string, body string) (events.APIGatewayProxyResponse, error) {
+	headers := make(map[string]string)
+	headers["Location"] = gameID
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusOK,
+		Body:       body,
+		Headers:    headers,
+	}, nil
+}
+
+func createUpdatedGameResponse(gameID string, body string) (events.APIGatewayProxyResponse, error) {
 	headers := make(map[string]string)
 	headers["Location"] = gameID
 	return events.APIGatewayProxyResponse{
