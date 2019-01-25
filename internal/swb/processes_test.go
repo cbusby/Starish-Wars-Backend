@@ -52,20 +52,22 @@ var _ = ginkgo.Describe("Processes", func() {
 
 		gameID := "123abc"
 		var (
-			contents string
-			err      error
+			persister persistence.Persister
+			contents  string
+			err       error
 		)
 
 		ginkgo.BeforeEach(func() {
-			persister := persistence.MockPersister{}
-			contents, err = Read(persister, gameID)
+			persister = persistence.MockPersister{ExpectedGameID: gameID}
 		})
 
-		ginkgo.It("Should not return an error", func() {
+		ginkgo.It("Should not return an error if valid gameID is given", func() {
+			contents, err = Read(persister, gameID)
 			gomega.Expect(err).To(gomega.BeNil())
 		})
 
 		ginkgo.It("Should read correctly", func() {
+			contents, err = Read(persister, gameID)
 			gomega.Expect(contents).To(gomega.Equal(fmt.Sprintf("Read '%s'", gameID)))
 		})
 	})
