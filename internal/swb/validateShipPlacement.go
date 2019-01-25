@@ -138,13 +138,13 @@ func shipIsContiguous(ship []Coordinate) bool {
 	})
 	if shipIsHorizontal(ship) {
 		for i := 1; i < len(ship); i++ {
-			if ship[i].Column-ship[i-1].Column > 1 {
+			if ship[i].Column-ship[i-1].Column != 1 {
 				return false
 			}
 		}
 	} else {
 		for i := 1; i < len(ship); i++ {
-			if ship[i].Row-ship[i-1].Row > 1 {
+			if ship[i].Row-ship[i-1].Row != 1 {
 				return false
 			}
 		}
