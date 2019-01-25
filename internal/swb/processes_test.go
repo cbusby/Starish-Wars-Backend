@@ -77,4 +77,41 @@ var _ = ginkgo.Describe("Processes", func() {
 			gomega.Expect(contents).To(gomega.Equal(fmt.Sprintf("Read '%s'", gameID)))
 		})
 	})
+
+	ginkgo.Describe("PUT", func() {
+
+		gameID := "123abc"
+		var (
+			persister persistence.Persister
+			//			contents  string
+			err error
+		)
+
+		ginkgo.BeforeEach(func() {
+			persister = persistence.MockPersister{
+				ExpectedGameID: gameID,
+				SavedGameState: `{
+	"status": "AWAITING_SHIPS",
+	"player_1": {},
+	"player_2": {}
+}`,
+			}
+		})
+
+		ginkgo.It("should return an error if an invalid game id is given", func() {
+			_, err = Update(persister, "hoohah", "{}")
+			gomega.Expect(err).NotTo(gomega.BeNil())
+		})
+
+		ginkgo.It("should return an error if saved game state is invalid", func() {
+			persister = persistence.MockPersister{gameID, `{"hoo": "hah"}`}
+			_, err = Update(persister, gameID, "{}")
+			gomega.Expect(err).NotTo(gomega.BeNil())
+		})
+
+		ginkgo.It("should return an error if new game state is invalid", func() {
+			_, err = Update(persister, gameID, `{"hoo": "hah"}`)
+			gomega.Expect(err).NotTo(gomega.BeNil())
+		})
+	})
 })
