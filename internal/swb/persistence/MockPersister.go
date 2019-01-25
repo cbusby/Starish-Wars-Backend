@@ -2,6 +2,7 @@ package persistence
 
 // MockPersister do-nothing implementation of Persister
 type MockPersister struct {
+	ExpectedGameID string
 }
 
 // Save keep function arguments and do nothing
