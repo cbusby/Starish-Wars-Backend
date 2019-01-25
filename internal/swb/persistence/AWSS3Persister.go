@@ -2,7 +2,6 @@ package persistence
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -46,7 +45,7 @@ func (a AWSS3Persister) Read(gameID string) (string, error) {
 		return "", err
 	}
 	if result == nil {
-		return "", errors.New("not found")
+		return "", fmt.Errorf("Not found: %s", gameID)
 	}
 	buf := bytes.NewBuffer(nil)
 	n, copyErr := io.Copy(buf, result.Body)
