@@ -125,5 +125,21 @@ var _ = ginkgo.Describe("Processes", func() {
 			contents, _ = Update(persister, gameID, newGameString)
 			gomega.Expect(contents).To(gomega.Equal(newGameString))
 		})
+
+		ginkgo.It("should update player 2's ship positions when player 1's positions are already provided", func() {
+			pwd, _ := os.Getwd()
+			projectDir := filepath.Dir(filepath.Dir(pwd))
+			oldGameStateBB, _ := ioutil.ReadFile(filepath.Join(projectDir, "examples", "place_ships_request_collapsed.json"))
+			oldGameString := string(oldGameStateBB)
+			persister = persistence.MockPersister{ExpectedGameID: gameID, SavedGameState: oldGameString}
+			newGameBB, _ := ioutil.ReadFile(filepath.Join(projectDir, "examples", "player_2_place_ships_request.json"))
+			newGameString := string(newGameBB)
+			contents, _ := Update(persister, gameID, newGameString)
+			var newGameState Game
+			json.Unmarshal([]byte(contents), &newGameState)
+			gomega.Expect(validateShipPlacement(newGameState.Player1.Ships)).To(gomega.BeTrue())
+			gomega.Expect(validateShipPlacement(newGameState.Player2.Ships)).To(gomega.BeTrue())
+			gomega.Expect(newGameState.Status).To(gomega.Equal(PLAYER_1_ACTIVE))
+		})
 	})
 })
