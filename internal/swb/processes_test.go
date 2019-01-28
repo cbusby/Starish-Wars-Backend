@@ -85,9 +85,10 @@ var _ = ginkgo.Describe("Processes", func() {
 
 		gameID := "123abc"
 		var (
-			persister persistence.Persister
-			contents  string
-			err       error
+			persister   persistence.Persister
+			contents    string
+			err         error
+			examplesDir string
 		)
 
 		ginkgo.BeforeEach(func() {
@@ -99,6 +100,9 @@ var _ = ginkgo.Describe("Processes", func() {
 	"player_2": {}
 }`,
 			}
+			pwd, _ := os.Getwd()
+			projectDir := filepath.Dir(filepath.Dir(pwd))
+			examplesDir = filepath.Join(projectDir, "examples")
 		})
 
 		ginkgo.It("should return an error if an invalid game id is given", func() {
@@ -118,21 +122,17 @@ var _ = ginkgo.Describe("Processes", func() {
 		})
 
 		ginkgo.It("should update player 1's ship positions when provided", func() {
-			pwd, _ := os.Getwd()
-			projectDir := filepath.Dir(filepath.Dir(pwd))
-			newGameBB, _ := ioutil.ReadFile(filepath.Join(projectDir, "examples", "place_ships_request_collapsed.json"))
+			newGameBB, _ := ioutil.ReadFile(filepath.Join(examplesDir, "place_ships_request_collapsed.json"))
 			newGameString := string(newGameBB)
 			contents, _ = Update(persister, gameID, newGameString)
 			gomega.Expect(contents).To(gomega.Equal(newGameString))
 		})
 
-		ginkgo.It("should update player 2's ship positions when player 1's positions are already provided", func() {
-			pwd, _ := os.Getwd()
-			projectDir := filepath.Dir(filepath.Dir(pwd))
-			oldGameStateBB, _ := ioutil.ReadFile(filepath.Join(projectDir, "examples", "place_ships_request_collapsed.json"))
+		ginkgo.It("should update player 2's ship positions and game status when player 1's positions are already provided", func() {
+			oldGameStateBB, _ := ioutil.ReadFile(filepath.Join(examplesDir, "place_ships_request_collapsed.json"))
 			oldGameString := string(oldGameStateBB)
 			persister = persistence.MockPersister{ExpectedGameID: gameID, SavedGameState: oldGameString}
-			newGameBB, _ := ioutil.ReadFile(filepath.Join(projectDir, "examples", "player_2_place_ships_request.json"))
+			newGameBB, _ := ioutil.ReadFile(filepath.Join(examplesDir, "player_2_place_ships_request.json"))
 			newGameString := string(newGameBB)
 			contents, _ := Update(persister, gameID, newGameString)
 			var newGameState Game
