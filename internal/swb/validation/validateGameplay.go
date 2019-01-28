@@ -18,6 +18,6 @@ func OneNewShot(oldPlayer model.Player, newPlayer model.Player) bool {
 }
 
 // AllShipsHit check if all of a player's ships have been sunk
-func AllShipsHit(inactivePlayer model.Player, activePlayerShots *[]model.Coordinate) bool {
+func AllShipsHit(inactivePlayer model.Player, activePlayerShots []model.Coordinate) bool {
 	return false
 }
