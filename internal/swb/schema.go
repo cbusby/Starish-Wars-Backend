@@ -1,18 +1,9 @@
 package swb
 
-import (
-	"fmt"
-	"strings"
-)
-
 // Coordinate one square on the grid
 type Coordinate struct {
 	Row    string `json:"row"`
 	Column int    `json:"column"`
-}
-
-func (c Coordinate) String() string {
-	return fmt.Sprintf("{%s,%d}", c.Row, c.Column)
 }
 
 // Grid placement of ships on the grid
@@ -22,24 +13,6 @@ type Grid struct {
 	Cruiser    [3]Coordinate `json:"cruiser"`
 	Submarine  [3]Coordinate `json:"submarine"`
 	Destroyer  [2]Coordinate `json:"destroyer"`
-}
-
-func (g Grid) String() string {
-	var gridString string
-	gridString = strings.Join(shipToString(g.Carrier[:]), ",") + "\n"
-	gridString = gridString + strings.Join(shipToString(g.Battleship[:]), ",") + "\n"
-	gridString = gridString + strings.Join(shipToString(g.Cruiser[:]), ",") + "\n"
-	gridString = gridString + strings.Join(shipToString(g.Submarine[:]), ",") + "\n"
-	gridString = gridString + strings.Join(shipToString(g.Destroyer[:]), ",")
-	return gridString
-}
-
-func shipToString(ship []Coordinate) []string {
-	var shipStrings []string
-	for _, coord := range ship {
-		shipStrings = append(shipStrings, coord.String())
-	}
-	return shipStrings
 }
 
 // Player combination of ships and shots
