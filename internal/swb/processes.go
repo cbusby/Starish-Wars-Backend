@@ -26,17 +26,17 @@ func Create(persister persistence.Persister) (string, string, error) {
 	return gameID, body, nil
 }
 
-// Read reads the current state of an existing game
-func Read(persister persistence.Persister, gameID string) (string, error) {
-	return persister.Read(gameID)
-}
-
 func newGame() string {
 	return `{
 	"status": "AWAITING_SHIPS",
 	"player_1": {},
 	"player_2": {}
 }`
+}
+
+// Read reads the current state of an existing game
+func Read(persister persistence.Persister, gameID string) (string, error) {
+	return persister.Read(gameID)
 }
 
 // Update checks that the new state is valid, including comparing the previous game state to the new one, and updates the new game state accordingly
