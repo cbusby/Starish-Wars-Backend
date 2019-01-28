@@ -1,8 +1,6 @@
 package swb
 
-import (
-	"sort"
-)
+import "sort"
 
 // Ships are sorted top to bottom, left to right as a side effect of calling this function
 func validateShipPlacement(grid Grid) bool {

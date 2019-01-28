@@ -42,7 +42,7 @@ func Update(persister persistence.Persister, gameID string, requestedGameState s
 	if newGameUnmarshalErr != nil || newGame.Status == "" {
 		return "", fmt.Errorf("Error unmarshaling new game state")
 	}
-	var updatedGame Game
+	var updatedGame Game = oldGame
 	if oldGame.Status == AWAITING_SHIPS {
 		if !allShipsPresent(oldGame.Player1.Ships) && validateShipPlacement(newGame.Player1.Ships) {
 			updatedGame.Player1.Ships = newGame.Player1.Ships
