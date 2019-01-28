@@ -1,4 +1,4 @@
-package swb
+package model
 
 // Coordinate one square on the grid
 type Coordinate struct {
