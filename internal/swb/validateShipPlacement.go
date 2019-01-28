@@ -63,7 +63,7 @@ func allShipsOnGrid(grid Grid) bool {
 
 func allCoordsOnGrid(ship []Coordinate) bool {
 	for i := 0; i < len(ship); i++ {
-		if ship[i].Row < 'A' || ship[i].Row > 'J' || ship[i].Column < 1 || ship[i].Column > 10 {
+		if ship[i].Row[0] < 'A' || ship[i].Row[0] > 'J' || ship[i].Column < 1 || ship[i].Column > 10 {
 			return false
 		}
 	}
@@ -144,7 +144,7 @@ func shipIsContiguous(ship []Coordinate) bool {
 		}
 	} else {
 		for i := 1; i < len(ship); i++ {
-			if ship[i].Row-ship[i-1].Row != 1 {
+			if ship[i].Row[0]-ship[i-1].Row[0] != 1 {
 				return false
 			}
 		}
