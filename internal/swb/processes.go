@@ -8,7 +8,9 @@ import (
 
 	"github.com/rs/xid"
 
+	"github.com/cbusby/Starish-Wars-Backend/internal/swb/model"
 	"github.com/cbusby/Starish-Wars-Backend/internal/swb/persistence"
+	v "github.com/cbusby/Starish-Wars-Backend/internal/swb/validation"
 )
 
 var errorLogger = log.New(os.Stderr, "ERROR ", log.Llongfile)
@@ -54,7 +56,9 @@ func Update(persister persistence.Persister, gameID string, requestedGameState s
 		return "", fmt.Errorf("Error unmarshaling new game state")
 	}
 	var updatedGame = oldGame
-	if oldGame.Status == AWAITING_SHIPS {
+	if oldGame.Status == model.GAME_OVER {
+		// Nothing needs to be done
+	} else if oldGame.Status == model.AWAITING_SHIPS {
 		if !allShipsPresent(oldGame.Player1.Ships) && validateShipPlacement(newGame.Player1.Ships) {
 			updatedGame.Player1.Ships = newGame.Player1.Ships
 		}
@@ -62,7 +66,35 @@ func Update(persister persistence.Persister, gameID string, requestedGameState s
 			updatedGame.Player2.Ships = newGame.Player2.Ships
 		}
 		if allShipsPresent(updatedGame.Player1.Ships) && allShipsPresent(updatedGame.Player2.Ships) {
-			updatedGame.Status = PLAYER_1_ACTIVE
+			updatedGame.Status = model.PLAYER_1_ACTIVE
+		}
+	} else {
+		var activePlayer model.Player
+		var inactivePlayer model.Player
+		var newActivePlayer model.Player
+		var newInactivePlayer model.Player
+		if oldGame.Status == model.PLAYER_1_ACTIVE {
+			activePlayer = oldGame.Player1
+			newActivePlayer = newGame.Player1
+			inactivePlayer = oldGame.Player2
+			newInactivePlayer = newGame.Player2
+		} else {
+			activePlayer = oldGame.Player2
+			newActivePlayer = newGame.Player2
+			inactivePlayer = oldGame.Player1
+			newInactivePlayer = newGame.Player1
+		}
+		if v.ShipsSame(activePlayer, newActivePlayer) &&
+			v.ShipsSame(inactivePlayer, newInactivePlayer) &&
+			v.ShotsSame(inactivePlayer, newInactivePlayer) &&
+			v.OneNewShot(activePlayer, newActivePlayer) {
+			updatedGame.Player1 = newGame.Player1
+			updatedGame.Player2 = newGame.Player2
+			if v.AllShipsHit(inactivePlayer, newActivePlayer.Shots) {
+				updatedGame.Status = model.GAME_OVER
+			} else {
+				updatedGame.Status = newGame.Status
+			}
 		}
 	}
 	updatedGameString, marshalErr := marshalGame(updatedGame)
@@ -76,13 +108,13 @@ func Update(persister persistence.Persister, gameID string, requestedGameState s
 	return updatedGameString, nil
 }
 
-func unmarshalGame(gameString string) (Game, error) {
-	var game Game
+func unmarshalGame(gameString string) (model.Game, error) {
+	var game model.Game
 	err := json.Unmarshal([]byte(gameString), &game)
 	return game, err
 }
 
-func marshalGame(game Game) (string, error) {
+func marshalGame(game model.Game) (string, error) {
 	gameByteArray, err := json.Marshal(game)
 	if err != nil {
 		return "", err

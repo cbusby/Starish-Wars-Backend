@@ -1,9 +1,13 @@
 package swb
 
-import "sort"
+import (
+	"sort"
+
+	"github.com/cbusby/Starish-Wars-Backend/internal/swb/model"
+)
 
 // Ships are sorted top to bottom, left to right as a side effect of calling this function
-func validateShipPlacement(grid Grid) bool {
+func validateShipPlacement(grid model.Grid) bool {
 	return allShipsPresent(grid) &&
 		allShipsOnGrid(grid) &&
 		allShipsHorizontalOrVertical(grid) &&
@@ -11,36 +15,36 @@ func validateShipPlacement(grid Grid) bool {
 		shipsDoNotOverlap(grid)
 }
 
-func allShipsPresent(grid Grid) bool {
+func allShipsPresent(grid model.Grid) bool {
 	for i := 0; i < len(grid.Carrier); i++ {
-		if grid.Carrier[i] == (Coordinate{}) {
+		if grid.Carrier[i] == (model.Coordinate{}) {
 			return false
 		}
 	}
 	for i := 0; i < len(grid.Battleship); i++ {
-		if grid.Battleship[i] == (Coordinate{}) {
+		if grid.Battleship[i] == (model.Coordinate{}) {
 			return false
 		}
 	}
 	for i := 0; i < len(grid.Cruiser); i++ {
-		if grid.Cruiser[i] == (Coordinate{}) {
+		if grid.Cruiser[i] == (model.Coordinate{}) {
 			return false
 		}
 	}
 	for i := 0; i < len(grid.Submarine); i++ {
-		if grid.Submarine[i] == (Coordinate{}) {
+		if grid.Submarine[i] == (model.Coordinate{}) {
 			return false
 		}
 	}
 	for i := 0; i < len(grid.Destroyer); i++ {
-		if grid.Destroyer[i] == (Coordinate{}) {
+		if grid.Destroyer[i] == (model.Coordinate{}) {
 			return false
 		}
 	}
 	return true
 }
 
-func allShipsOnGrid(grid Grid) bool {
+func allShipsOnGrid(grid model.Grid) bool {
 	if !allCoordsOnGrid(grid.Carrier[:]) {
 		return false
 	}
@@ -59,7 +63,7 @@ func allShipsOnGrid(grid Grid) bool {
 	return true
 }
 
-func allCoordsOnGrid(ship []Coordinate) bool {
+func allCoordsOnGrid(ship []model.Coordinate) bool {
 	for i := 0; i < len(ship); i++ {
 		if ship[i].Row[0] < 'A' || ship[i].Row[0] > 'J' || ship[i].Column < 1 || ship[i].Column > 10 {
 			return false
@@ -68,7 +72,7 @@ func allCoordsOnGrid(ship []Coordinate) bool {
 	return true
 }
 
-func allShipsHorizontalOrVertical(grid Grid) bool {
+func allShipsHorizontalOrVertical(grid model.Grid) bool {
 	if !(shipIsHorizontal(grid.Carrier[:]) || shipIsVertical(grid.Carrier[:])) {
 		return false
 	}
@@ -87,7 +91,7 @@ func allShipsHorizontalOrVertical(grid Grid) bool {
 	return true
 }
 
-func shipIsHorizontal(ship []Coordinate) bool {
+func shipIsHorizontal(ship []model.Coordinate) bool {
 	for i := 1; i < len(ship); i++ {
 		if ship[i].Row != ship[0].Row {
 			return false
@@ -96,7 +100,7 @@ func shipIsHorizontal(ship []Coordinate) bool {
 	return true
 }
 
-func shipIsVertical(ship []Coordinate) bool {
+func shipIsVertical(ship []model.Coordinate) bool {
 	for i := 1; i < len(ship); i++ {
 		if ship[i].Column != ship[0].Column {
 			return false
@@ -105,7 +109,7 @@ func shipIsVertical(ship []Coordinate) bool {
 	return true
 }
 
-func allShipsInTouchingSpaces(grid Grid) bool {
+func allShipsInTouchingSpaces(grid model.Grid) bool {
 	if !shipIsContiguous(grid.Carrier[:]) {
 		return false
 	}
@@ -126,7 +130,7 @@ func allShipsInTouchingSpaces(grid Grid) bool {
 
 // This is where the sorting takes place
 // Look into copying the ships before sorting?
-func shipIsContiguous(ship []Coordinate) bool {
+func shipIsContiguous(ship []model.Coordinate) bool {
 	sort.Slice(ship, func(i, j int) bool {
 		if ship[i].Row == ship[j].Row {
 			return ship[i].Column < ship[j].Column
@@ -150,7 +154,7 @@ func shipIsContiguous(ship []Coordinate) bool {
 	return true
 }
 
-func shipsDoNotOverlap(grid Grid) bool {
+func shipsDoNotOverlap(grid model.Grid) bool {
 	if shipsOverlap(grid.Carrier[:], grid.Battleship[:]) {
 		return false
 	}
@@ -184,7 +188,7 @@ func shipsDoNotOverlap(grid Grid) bool {
 	return true
 }
 
-func shipsOverlap(ship1 []Coordinate, ship2 []Coordinate) bool {
+func shipsOverlap(ship1 []model.Coordinate, ship2 []model.Coordinate) bool {
 	for i := 0; i < len(ship2); i++ {
 		for j := 0; j < len(ship1); j++ {
 			if ship1[j] == ship2[i] {
