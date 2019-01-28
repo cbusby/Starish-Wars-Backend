@@ -11,6 +11,7 @@
   - https://onsi.github.io/ginkgo/
   - http://onsi.github.io/gomega/
 - Run all tests in your project: from the root of your project do `go test ./...`.
+- If you create packages and those packages have tests, there must be a *_suite_test.go file in the package in order for Ginkgo to pick them up. Discussion at https://github.com/onsi/ginkgo/issues/344
 
 **AWS quirks we've discovered**
 
