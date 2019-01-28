@@ -26,19 +26,30 @@ func Create(persister persistence.Persister) (string, string, error) {
 	return gameID, body, nil
 }
 
+// Read reads the current state of an existing game
+func Read(persister persistence.Persister, gameID string) (string, error) {
+	return persister.Read(gameID)
+}
+
+func newGame() string {
+	return `{
+	"status": "AWAITING_SHIPS",
+	"player_1": {},
+	"player_2": {}
+}`
+}
+
 // Update checks that the new state is valid, including comparing the previous game state to the new one, and updates the new game state accordingly
 func Update(persister persistence.Persister, gameID string, requestedGameState string) (string, error) {
 	oldGameString, readOldGameErr := persister.Read(gameID)
 	if readOldGameErr != nil {
 		return "", readOldGameErr
 	}
-	var oldGame Game
-	oldGameUnmarshalErr := json.Unmarshal([]byte(oldGameString), &oldGame)
+	oldGame, oldGameUnmarshalErr := unmarshalGame(oldGameString)
 	if oldGameUnmarshalErr != nil || oldGame.Status == "" {
 		return "", fmt.Errorf("Error unmarshaling previous game state")
 	}
-	var newGame Game
-	newGameUnmarshalErr := json.Unmarshal([]byte(requestedGameState), &newGame)
+	newGame, newGameUnmarshalErr := unmarshalGame(requestedGameState)
 	if newGameUnmarshalErr != nil || newGame.Status == "" {
 		return "", fmt.Errorf("Error unmarshaling new game state")
 	}
@@ -54,11 +65,10 @@ func Update(persister persistence.Persister, gameID string, requestedGameState s
 			updatedGame.Status = PLAYER_1_ACTIVE
 		}
 	}
-	updatedGameByteArray, marshalErr := json.Marshal(updatedGame)
+	updatedGameString, marshalErr := marshalGame(updatedGame)
 	if marshalErr != nil {
 		return "", marshalErr
 	}
-	updatedGameString := string(updatedGameByteArray)
 	saveErr := persister.Save(gameID, updatedGameString)
 	if saveErr != nil {
 		return "", saveErr
@@ -66,15 +76,16 @@ func Update(persister persistence.Persister, gameID string, requestedGameState s
 	return updatedGameString, nil
 }
 
-// Read reads the current state of an existing game
-func Read(persister persistence.Persister, gameID string) (string, error) {
-	return persister.Read(gameID)
+func unmarshalGame(gameString string) (Game, error) {
+	var game Game
+	err := json.Unmarshal([]byte(gameString), &game)
+	return game, err
 }
 
-func newGame() string {
-	return `{
-	"status": "AWAITING_SHIPS",
-	"player_1": {},
-	"player_2": {}
-}`
+func marshalGame(game Game) (string, error) {
+	gameByteArray, err := json.Marshal(game)
+	if err != nil {
+		return "", err
+	}
+	return string(gameByteArray), nil
 }
