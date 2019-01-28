@@ -2,8 +2,8 @@ package swb
 
 // Coordinate one square on the grid
 type Coordinate struct {
-	Row    rune `json:"row"`
-	Column int  `json:"column"`
+	Row    string `json:"row"`
+	Column int    `json:"column"`
 }
 
 // Grid placement of ships on the grid
