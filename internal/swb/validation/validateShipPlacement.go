@@ -1,18 +1,20 @@
-package swb
+package validation
 
 import (
 	"github.com/cbusby/Starish-Wars-Backend/internal/swb/model"
 )
 
-func validateShipPlacement(grid model.Grid) bool {
-	return allShipsPresent(grid) &&
+// ValidateShipPlacement perform all validations for correct ship placement
+func ValidateShipPlacement(grid model.Grid) bool {
+	return AllShipsPresent(grid) &&
 		allShipsOnGrid(grid) &&
 		allShipsHorizontalOrVertical(grid) &&
 		allShipsInTouchingSpaces(grid) &&
 		shipsDoNotOverlap(grid)
 }
 
-func allShipsPresent(grid model.Grid) bool {
+// AllShipsPresent validate that all ships are placed on grid
+func AllShipsPresent(grid model.Grid) bool {
 	for i := 0; i < len(grid.Carrier); i++ {
 		if grid.Carrier[i] == (model.Coordinate{}) {
 			return false

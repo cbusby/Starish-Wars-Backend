@@ -12,6 +12,7 @@ import (
 
 	"github.com/cbusby/Starish-Wars-Backend/internal/swb/model"
 	"github.com/cbusby/Starish-Wars-Backend/internal/swb/persistence"
+	v "github.com/cbusby/Starish-Wars-Backend/internal/swb/validation"
 )
 
 var _ = ginkgo.Describe("Processes", func() {
@@ -140,8 +141,8 @@ var _ = ginkgo.Describe("Processes", func() {
 				contents, _ := Update(persister, gameID, newGameString)
 				var newGameState model.Game
 				json.Unmarshal([]byte(contents), &newGameState)
-				gomega.Expect(validateShipPlacement(newGameState.Player1.Ships)).To(gomega.BeTrue())
-				gomega.Expect(validateShipPlacement(newGameState.Player2.Ships)).To(gomega.BeTrue())
+				gomega.Expect(v.ValidateShipPlacement(newGameState.Player1.Ships)).To(gomega.BeTrue())
+				gomega.Expect(v.ValidateShipPlacement(newGameState.Player2.Ships)).To(gomega.BeTrue())
 				gomega.Expect(newGameState.Status).To(gomega.Equal(model.PLAYER_1_ACTIVE))
 			})
 
