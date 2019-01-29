@@ -238,5 +238,18 @@ var _ = ginkgo.Describe("Processes", func() {
 				gomega.Expect(returnedGame.Status).To(gomega.Equal(model.GAME_OVER))
 			})
 		})
+
+		ginkgo.Describe("GAME_OVER", func() {
+
+			ginkgo.It("returns final game state when game is over", func() {
+				game := model.Game{Status: model.GAME_OVER}
+				oldGameString, _ := marshalGame(game)
+				persister = persistence.MockPersister{ExpectedGameID: gameID, SavedGameState: oldGameString}
+				game.Player1.Shots = append(game.Player1.Shots, model.Coordinate{"A", 1})
+				newGameString, _ := marshalGame(game)
+				returnedGameString, _ := Update(persister, gameID, newGameString)
+				gomega.Expect(returnedGameString).To(gomega.Equal(oldGameString))
+			})
+		})
 	})
 })
