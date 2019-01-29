@@ -1,12 +1,9 @@
 package swb
 
 import (
-	"sort"
-
 	"github.com/cbusby/Starish-Wars-Backend/internal/swb/model"
 )
 
-// Ships are sorted top to bottom, left to right as a side effect of calling this function
 func validateShipPlacement(grid model.Grid) bool {
 	return allShipsPresent(grid) &&
 		allShipsOnGrid(grid) &&
@@ -128,25 +125,17 @@ func allShipsInTouchingSpaces(grid model.Grid) bool {
 	return true
 }
 
-// This is where the sorting takes place
-// Look into copying the ships before sorting?
 func shipIsContiguous(ship []model.Coordinate) bool {
-	sort.Slice(ship, func(i, j int) bool {
-		if ship[i].Row == ship[j].Row {
-			return ship[i].Column < ship[j].Column
-		} else {
-			return ship[i].Row < ship[j].Row
-		}
-	})
-	if shipIsHorizontal(ship) {
-		for i := 1; i < len(ship); i++ {
-			if ship[i].Column-ship[i-1].Column != 1 {
+	copy := model.SortAndCopyShip(ship)
+	if shipIsHorizontal(copy) {
+		for i := 1; i < len(copy); i++ {
+			if copy[i].Column-copy[i-1].Column != 1 {
 				return false
 			}
 		}
 	} else {
-		for i := 1; i < len(ship); i++ {
-			if ship[i].Row[0]-ship[i-1].Row[0] != 1 {
+		for i := 1; i < len(copy); i++ {
+			if copy[i].Row[0]-copy[i-1].Row[0] != 1 {
 				return false
 			}
 		}

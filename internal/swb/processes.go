@@ -18,7 +18,11 @@ var errorLogger = log.New(os.Stderr, "ERROR ", log.Llongfile)
 // Create creates a new game, writes the state to S3, and returns the GameID and the state
 func Create(persister persistence.Persister) (string, string, error) {
 	gameID := xid.New().String()
-	body := newGame()
+	body := `{
+		"status": "AWAITING_SHIPS",
+		"player_1": {},
+		"player_2": {}
+	}`
 
 	uploadErr := persister.Save(gameID, body)
 	if uploadErr != nil {
@@ -26,14 +30,6 @@ func Create(persister persistence.Persister) (string, string, error) {
 	}
 
 	return gameID, body, nil
-}
-
-func newGame() string {
-	return `{
-	"status": "AWAITING_SHIPS",
-	"player_1": {},
-	"player_2": {}
-}`
 }
 
 // Read reads the current state of an existing game
@@ -90,7 +86,7 @@ func Update(persister persistence.Persister, gameID string, requestedGameState s
 			v.OneNewShot(activePlayer, newActivePlayer) {
 			updatedGame.Player1 = newGame.Player1
 			updatedGame.Player2 = newGame.Player2
-			if v.AllShipsHit(inactivePlayer, newActivePlayer.Shots) {
+			if v.AllShipsSunk(inactivePlayer, newActivePlayer.Shots) {
 				updatedGame.Status = model.GAME_OVER
 			} else {
 				updatedGame.Status = newGame.Status

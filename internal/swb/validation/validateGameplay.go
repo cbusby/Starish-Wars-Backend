@@ -1,8 +1,6 @@
 package validation
 
 import (
-	"sort"
-
 	"github.com/cbusby/Starish-Wars-Backend/internal/swb/model"
 )
 
@@ -32,20 +30,8 @@ func shipsAreSame(firstShip []model.Coordinate, secondShip []model.Coordinate) b
 	if len(firstShip) != len(secondShip) {
 		return false
 	}
-	firstCopy := append([]model.Coordinate(nil), firstShip...)
-	secondCopy := append([]model.Coordinate(nil), secondShip...)
-	sort.Slice(firstCopy, func(i, j int) bool {
-		if firstCopy[i].Row == firstCopy[j].Row {
-			return firstCopy[i].Column < firstCopy[j].Column
-		}
-		return firstCopy[i].Row < firstCopy[j].Row
-	})
-	sort.Slice(secondCopy, func(i, j int) bool {
-		if secondCopy[i].Row == secondCopy[j].Row {
-			return secondCopy[i].Column < secondCopy[j].Column
-		}
-		return secondCopy[i].Row < secondCopy[j].Row
-	})
+	firstCopy := model.SortAndCopyShip(firstShip)
+	secondCopy := model.SortAndCopyShip(secondShip)
 	for i := 0; i < len(firstCopy); i++ {
 		if firstCopy[i] != secondCopy[i] {
 			return false
@@ -91,28 +77,28 @@ func OneNewShot(oldPlayer model.Player, newPlayer model.Player) bool {
 	return true
 }
 
-// AllShipsHit check if all of a player's ships have been sunk
-func AllShipsHit(inactivePlayer model.Player, activePlayerShots []model.Coordinate) bool {
+// AllShipsSunk check if all of a player's ships have been sunk
+func AllShipsSunk(inactivePlayer model.Player, activePlayerShots []model.Coordinate) bool {
 	ships := inactivePlayer.Ships
-	if !shipHasBeenSunk(ships.Carrier[:], activePlayerShots) {
+	if !shipIsSunk(ships.Carrier[:], activePlayerShots) {
 		return false
 	}
-	if !shipHasBeenSunk(ships.Battleship[:], activePlayerShots) {
+	if !shipIsSunk(ships.Battleship[:], activePlayerShots) {
 		return false
 	}
-	if !shipHasBeenSunk(ships.Cruiser[:], activePlayerShots) {
+	if !shipIsSunk(ships.Cruiser[:], activePlayerShots) {
 		return false
 	}
-	if !shipHasBeenSunk(ships.Submarine[:], activePlayerShots) {
+	if !shipIsSunk(ships.Submarine[:], activePlayerShots) {
 		return false
 	}
-	if !shipHasBeenSunk(ships.Destroyer[:], activePlayerShots) {
+	if !shipIsSunk(ships.Destroyer[:], activePlayerShots) {
 		return false
 	}
 	return true
 }
 
-func shipHasBeenSunk(ship []model.Coordinate, shots []model.Coordinate) bool {
+func shipIsSunk(ship []model.Coordinate, shots []model.Coordinate) bool {
 	spacesHit := 0
 	for i := 0; i < len(shots); i++ {
 		for j := 0; j < len(ship); j++ {

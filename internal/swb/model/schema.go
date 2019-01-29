@@ -1,5 +1,7 @@
 package model
 
+import "sort"
+
 // Coordinate one square on the grid
 type Coordinate struct {
 	Row    string `json:"row"`
@@ -13,6 +15,18 @@ type Grid struct {
 	Cruiser    [3]Coordinate `json:"cruiser"`
 	Submarine  [3]Coordinate `json:"submarine"`
 	Destroyer  [2]Coordinate `json:"destroyer"`
+}
+
+// SortAndCopyShip creates a copy of a ship, sorts its coordinates into top-to-bottom, left-to-right order, and returns the copy
+func SortAndCopyShip(ship []Coordinate) []Coordinate {
+	copy := append([]Coordinate(nil), ship...)
+	sort.Slice(copy, func(i, j int) bool {
+		if copy[i].Row == copy[j].Row {
+			return copy[i].Column < copy[j].Column
+		}
+		return copy[i].Row < copy[j].Row
+	})
+	return copy
 }
 
 // Player combination of ships and shots
