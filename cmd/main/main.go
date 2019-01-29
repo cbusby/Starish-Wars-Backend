@@ -54,6 +54,7 @@ func createGameResponse(responseCode int, gameID string, body string) (events.AP
 	headers := make(map[string]string)
 	headers["Location"] = gameID
 	headers["Access-Control-Allow-Origin"] = "*"
+	headers["Access-Control-Expose-Headers"] = "Location"
 	return events.APIGatewayProxyResponse{
 		StatusCode: responseCode,
 		Body:       body,
