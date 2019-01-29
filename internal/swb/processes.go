@@ -55,13 +55,13 @@ func Update(persister persistence.Persister, gameID string, requestedGameState s
 	if oldGame.Status == model.GAME_OVER {
 		// Nothing needs to be done
 	} else if oldGame.Status == model.AWAITING_SHIPS {
-		if !allShipsPresent(oldGame.Player1.Ships) && validateShipPlacement(newGame.Player1.Ships) {
+		if !v.AllShipsPresent(oldGame.Player1.Ships) && v.ValidateShipPlacement(newGame.Player1.Ships) {
 			updatedGame.Player1.Ships = newGame.Player1.Ships
 		}
-		if !allShipsPresent(oldGame.Player2.Ships) && validateShipPlacement(newGame.Player2.Ships) {
+		if !v.AllShipsPresent(oldGame.Player2.Ships) && v.ValidateShipPlacement(newGame.Player2.Ships) {
 			updatedGame.Player2.Ships = newGame.Player2.Ships
 		}
-		if allShipsPresent(updatedGame.Player1.Ships) && allShipsPresent(updatedGame.Player2.Ships) {
+		if v.AllShipsPresent(updatedGame.Player1.Ships) && v.AllShipsPresent(updatedGame.Player2.Ships) {
 			updatedGame.Status = model.PLAYER_1_ACTIVE
 		}
 	} else {

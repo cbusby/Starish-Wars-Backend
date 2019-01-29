@@ -1,4 +1,4 @@
-package swb
+package validation
 
 import (
 	"github.com/onsi/ginkgo"
@@ -40,7 +40,7 @@ var _ = ginkgo.Describe("Validation of initial ship placement", func() {
 
 	ginkgo.Describe("All ships should be present", func() {
 		ginkgo.It("flags a model.Grid as valid if all ships present", func() {
-			gomega.Expect(allShipsPresent(valid)).To(gomega.BeTrue())
+			gomega.Expect(AllShipsPresent(valid)).To(gomega.BeTrue())
 		})
 
 		ginkgo.It("flags a model.Grid as invalid if a ship is missing", func() {
@@ -50,7 +50,7 @@ var _ = ginkgo.Describe("Validation of initial ship placement", func() {
 			invalid.Carrier[2] = model.Coordinate{"A", 3}
 			invalid.Carrier[3] = model.Coordinate{"A", 4}
 			invalid.Carrier[4] = model.Coordinate{"A", 5}
-			gomega.Expect(allShipsPresent(invalid)).NotTo(gomega.BeTrue())
+			gomega.Expect(AllShipsPresent(invalid)).NotTo(gomega.BeTrue())
 		})
 	})
 
@@ -388,7 +388,7 @@ var _ = ginkgo.Describe("Validation of initial ship placement", func() {
 	})
 
 	ginkgo.It("flags a model.Grid as valid if all criteria are met", func() {
-		gomega.Expect(validateShipPlacement(valid)).To(gomega.BeTrue())
+		gomega.Expect(ValidateShipPlacement(valid)).To(gomega.BeTrue())
 	})
 
 	ginkgo.It("flags a model.Grid as invalid if a criterion is not met", func() {
@@ -415,6 +415,6 @@ var _ = ginkgo.Describe("Validation of initial ship placement", func() {
 		invalid.Destroyer[0] = model.Coordinate{"B", 7}
 		invalid.Destroyer[1] = model.Coordinate{"B", 9}
 
-		gomega.Expect(validateShipPlacement(invalid)).NotTo(gomega.BeTrue())
+		gomega.Expect(ValidateShipPlacement(invalid)).NotTo(gomega.BeTrue())
 	})
 })
