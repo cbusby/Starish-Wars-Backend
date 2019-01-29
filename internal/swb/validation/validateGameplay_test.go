@@ -108,7 +108,7 @@ var _ = ginkgo.Describe("Validation of gameplay", func() {
 	})
 
 	ginkgo.It("correctly detects when all of a player's ships haven't been hit", func() {
-		gomega.Expect(AllShipsHit(next.Player1, next.Player2.Shots)).To(gomega.BeFalse())
+		gomega.Expect(AllShipsSunk(next.Player1, next.Player2.Shots)).To(gomega.BeFalse())
 	})
 
 	ginkgo.It("detects when all a player's ships have been hit", func() {
@@ -118,6 +118,6 @@ var _ = ginkgo.Describe("Validation of gameplay", func() {
 		next.Player2.Shots = append(next.Player2.Shots, prev.Player1.Ships.Submarine[:]...)
 		next.Player2.Shots = append(next.Player2.Shots, prev.Player1.Ships.Destroyer[:]...)
 
-		gomega.Expect(AllShipsHit(prev.Player1, next.Player2.Shots)).To(gomega.BeTrue())
+		gomega.Expect(AllShipsSunk(prev.Player1, next.Player2.Shots)).To(gomega.BeTrue())
 	})
 })
