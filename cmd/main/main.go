@@ -32,6 +32,7 @@ func router(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, 
 		return createGameResponse(http.StatusOK, gameID, contents)
 	case "POST":
 		gameID, body, err := swb.Create(persister)
+
 		if err != nil {
 			return serverError(err, "Could not create game")
 		}
@@ -52,6 +53,7 @@ func router(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, 
 func createGameResponse(responseCode int, gameID string, body string) (events.APIGatewayProxyResponse, error) {
 	headers := make(map[string]string)
 	headers["Location"] = gameID
+	headers["Access-Control-Allow-Origin"] = "*"
 	return events.APIGatewayProxyResponse{
 		StatusCode: responseCode,
 		Body:       body,
@@ -61,26 +63,36 @@ func createGameResponse(responseCode int, gameID string, body string) (events.AP
 
 func notFoundError(err error) (events.APIGatewayProxyResponse, error) {
 	errorLogger.Println(err.Error())
+	headers := make(map[string]string)
+	headers["Access-Control-Allow-Origin"] = "*"
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusNotFound,
 		Body:       err.Error(),
+		Headers:    headers,
 	}, nil
 }
 
 func serverError(err error, message string) (events.APIGatewayProxyResponse, error) {
 	errorLogger.Println(err.Error())
+	headers := make(map[string]string)
+	headers["Access-Control-Allow-Origin"] = "*"
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusInternalServerError,
 		Body:       message,
+		Headers:    headers,
 	}, nil
 }
 
 func clientError(status int, message string) (events.APIGatewayProxyResponse, error) {
+	headers := make(map[string]string)
+	headers["Access-Control-Allow-Origin"] = "*"
+
 	return events.APIGatewayProxyResponse{
 		StatusCode: status,
 		Body:       message,
+		Headers:    headers,
 	}, nil
 }
 
